@@ -1,33 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Favorites</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-white text-gray-800">
   <nav class="bg-pink-500 text-white p-4 flex justify-between items-center shadow-md fixed w-full top-0 z-50">
-    <h1 class="text-xl font-bold">❤️ Favorites</h1>
+    <h1 class="text-xl font-bold">❤️ Favorite Products</h1>
     <div class="space-x-4">
       <a href="index.html" class="hover:underline">🏠 Home</a>
       <a href="cart.html" class="hover:underline">🛒 Cart</a>
     </div>
-  </nav>
-
-  <main class="pt-20 px-6 max-w-6xl mx-auto">
-    <h2 class="text-2xl text-pink-500 font-bold mb-6">Your Favorite Products</h2>
+  </nav>  <main class="pt-20 px-6 max-w-6xl mx-auto">
+    <h2 class="text-2xl text-pink-500 font-bold mb-6">Your Favorite Items</h2>
     <div id="favoritesContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <!-- Favorite items will appear here -->
+      <!-- Favorite products will be inserted here -->
     </div>
-  </main>
-
-  <script>
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  </main>  <script>
+    const favorites = JSON.parse(localStorage.getItem('favoriteItems')) || [];
     const container = document.getElementById('favoritesContainer');
 
     if (favorites.length === 0) {
-      container.innerHTML = '<p class="text-gray-500">No favorite products yet.</p>';
+      container.innerHTML = '<p class="text-gray-500">No favorite products added yet.</p>';
     } else {
       favorites.forEach((product) => {
         const card = document.createElement('div');
@@ -42,6 +37,5 @@
         container.appendChild(card);
       });
     }
-  </script>
-</body>
+  </script></body>
 </html>
