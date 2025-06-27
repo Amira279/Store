@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Boutique</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>Made with love for you 💖</h1>
+    <input type="text" id="searchBox" placeholder="Search products...">
+    <select id="sortMenu">
+      <option value="default">Sort by</option>
+      <option value="priceLow">Price: Low to High</option>
+      <option value="priceHigh">Price: High to Low</option>
+      <option value="nameAZ">Name: A-Z</option>
+    </select>
+    <a href="cart.html" id="cartLink">🛒 <span id="cartCount"></span></a>
+    <button onclick="exportProducts()">📁 Export JSON</button>
+  </header>
+
+  <section class="products" id="productList">
+    <!-- Products will be rendered here -->
+  </section>
+
+  <script>
+    let allProducts = JSON.parse(localStorage.getItem('myProducts')) || [];
+    const productList = document.getElementById('productList');
+    const searchBox = document.getElementById('searchBox');
+    const sortMenu = document.getElementById('sortMenu');
+    const cartCount = document.getElementById('cartCount');
+
+    function renderProducts(products) {
+      productList.innerHTML = '';
+      if (products.length === 0) {
+        productList.innerHTML = '<p style="text-align:center; color: #999">No products found.</p>';
+        return;
+      }
+      products.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${p.imageUrl}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <p>$${p.price.toFixed(2)}</p>
+          <button onclick="viewProduct('${p.name}', ${p.price}, '${p.desc}', '${p.imageUrl}')">View</button>
+          <button onclick="deleteProduct('${p.name}')">🗑️</button>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
+    function viewProduct(name, price, desc, imageUrl) {
+      const product = { name, price, desc, imageUrl };
+      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      window.location.href = 'product_page.html';
+    }
+
+    function deleteProduct(name) {
+      if (confirm(`Are you sure you want to delete "${name}"?`)) {
+        allProducts = allProducts.filter(p => p.name !== name);
+        localStorage.setItem('myProducts', JSON.stringify(allProducts));
+        renderProducts(allProducts);
+      }
+    }
+
+    searchBox.addEventListener('input', () => {
+      const keyword = searchBox.value.toLowerCase();
+      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(keyword));
+      renderProducts(filtered);
+    });
+
+    sortMenu.addEventListener('change', () => {
+      let sorted = [...allProducts];
+      if (sortMenu.value === 'priceLow') {
+        sorted.sort((a, b) => a.price - b.price);
+      } else if (sortMenu.value === 'priceHigh') {
+        sorted.sort((a, b) => b.price - a.price);
+      } else if (sortMenu.value === 'nameAZ') {
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      renderProducts(sorted);
+    });
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cartCount.textContent = cart.length > 0 ? `(${cart.length})` : '';
+    }
+
+    function exportProducts() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allProducts, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "products.json");
+      document.body.appendChild(dlAnchor);
+      dlAnchor.click();
+      dlAnchor.remove();
+    }
+
+    updateCartCount();
+    renderProducts(allProducts);
+  </script>
+</body>
+
+</html>

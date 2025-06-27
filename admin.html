@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+      padding-top: 60px;
+    }
+    nav {
+      background-color: #ff69b4;
+      padding: 10px 20px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      z-index: 999;
+    }
+    nav a {
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      margin-left: 15px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #d63384;
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e055a6;
+    }
+    .success {
+      color: green;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .product-list {
+      margin-top: 30px;
+    }
+    .product-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff0f5;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .product-item span {
+      color: #d63384;
+    }
+    .product-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+    .edit-fields {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+    }
+    .edit-fields input {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>  <nav>
+    <div>🛠 Admin Dashboard</div>
+    <div>
+      <a href="index.html">🏠 Home</a>
+      <a href="login.html">Logout</a>
+    </div>
+  </nav>  <div class="container">
+    <h2>Add New Product</h2>
+    <input type="text" id="productName" placeholder="Product Name" />
+    <input type="number" id="productPrice" placeholder="Product Price" />
+    <input type="text" id="productImage" placeholder="Image URL" />
+    <button onclick="addProduct()">Add Product</button>
+    <div class="success" id="message"></div><div class="product-list" id="productList">
+  <!-- Products will appear here -->
+</div>
+
+  </div>  <script>
+    function loadProducts() {
+      const productList = document.getElementById('productList');
+      const products = JSON.parse(localStorage.getItem('myProducts')) || [];
+      let html = '<h2>📦 Current Products</h2>';
+      if (products.length === 0) {
+        html += '<p style="color:gray">No products added yet.</p>';
+      } else {
+        products.forEach((product, index) => {
+          html += `
+            <div class="product-item" id="product-${index}">
+              <div style="display:flex;align-items:center;">
+                <img src="${product.imageUrl}" alt="">
+                <div>
+                  <span><strong>${product.name}</strong></span><br>
+                  <span>$${product.price.toFixed(2)}</span>
+                </div>
+              </div>
+              <div>
+                <button onclick="showEdit(${index})">✏️ Edit</button>
+                <button onclick="deleteProduct(${index})">🗑 Delete</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      productList.innerHTML = html;
+    }
+
+    function addProduct() {
+      const name = document.getElementById('productName').value;
+      const price = parseFloat(document.getElementById('productPrice').value);
+      const imageUrl = document.getElementById('productImage').value;
+
+      if (!name || !price || !imageUrl) {
+        alert('Please fill all fields!');
+        return;
+      }
+
+      const newProduct = { name, price, imageUrl };
+      const products = JSON.parse(localStorage.getItem('myProducts')) || [];
+      products.push(newProduct);
+      localStorage.setItem('myProducts', JSON.stringify(products));
+
+      document.getElementById('message').textContent = '✅ Product added successfully!';
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productImage').value = '';
+      loadProducts();
+    }
+
+    function deleteProduct(index) {
+      const products = JSON.parse(localStorage.getItem('myProducts')) || [];
+      products.splice(index, 1);
+      localStorage.setItem('myProducts', JSON.stringify(products));
+      loadProducts();
+    }
+
+    function showEdit(index) {
+      const product = JSON.parse(localStorage.getItem('myProducts'))[index];
+      const itemDiv = document.getElementById(`product-${index}`);
+      itemDiv.innerHTML = `
+        <div class="edit-fields">
+          <input type="text" id="editName${index}" value="${product.name}" />
+          <input type="number" id="editPrice${index}" value="${product.price}" />
+          <input type="text" id="editImage${index}" value="${product.imageUrl}" />
+          <button onclick="saveEdit(${index})">💾 Save</button>
+          <button onclick="loadProducts()">Cancel</button>
+        </div>
+      `;
+    }
+
+    function saveEdit(index) {
+      const name = document.getElementById(`editName${index}`).value;
+      const price = parseFloat(document.getElementById(`editPrice${index}`).value);
+      const imageUrl = document.getElementById(`editImage${index}`).value;
+
+      if (!name || !price || !imageUrl) {
+        alert('Please fill all fields.');
+        return;
+      }
+
+      const products = JSON.parse(localStorage.getItem('myProducts'));
+      products[index] = { name, price, imageUrl };
+      localStorage.setItem('myProducts', JSON.stringify(products));
+      loadProducts();
+    }
+
+    loadProducts();
+  </script></body>
+</html>

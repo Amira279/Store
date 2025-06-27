@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800">
+  <nav class="bg-pink-500 text-white p-4 flex justify-between items-center shadow-md fixed w-full top-0 z-50">
+    <h1 class="text-xl font-bold">🛒 Shopping Cart</h1>
+    <div class="space-x-4">
+      <a href="index.html" class="hover:underline">🏠 Home</a>
+      <a href="payment.html" class="hover:underline">💳 Checkout</a>
+    </div>
+  </nav>
+
+  <main class="pt-20 px-6 max-w-6xl mx-auto">
+    <h2 class="text-2xl text-pink-500 font-bold mb-6">Your Cart Items</h2>
+    <div id="cartContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <!-- Cart items will be inserted here -->
+    </div>
+    <div id="cartSummary" class="text-right font-bold text-xl text-pink-600">
+      <!-- Total will appear here -->
+    </div>
+  </main>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const container = document.getElementById('cartContainer');
+    const summary = document.getElementById('cartSummary');
+
+    let total = 0;
+
+    if (cart.length === 0) {
+      container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+    } else {
+      cart.forEach((product) => {
+        total += product.price;
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl shadow p-3';
+
+        card.innerHTML = `
+          <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-40 object-cover rounded-xl mb-2" />
+          <h3 class="text-pink-600 font-bold text-lg">${product.name}</h3>
+          <p class="text-gray-500">$${product.price.toFixed(2)}</p>
+        `;
+
+        container.appendChild(card);
+      });
+
+      summary.textContent = `Total: $${total.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorites | MyShop</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding-top: 60px;
+    }
+    .navbar {
+      background-color: #ff69b4;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 999;
+    }
+    .navbar .logo {
+      font-size: 1.2em;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 15px;
+    }
+    .navbar-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .navbar-links a:hover {
+      text-decoration: underline;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        background-color: #ff69b4;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 10px 0;
+      }
+      .navbar-links.show {
+        display: flex;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+    .favorites {
+      padding: 20px;
+    }
+    .product {
+      background-color: #fff0f5;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .product img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .product-details {
+      flex: 1;
+    }
+    .product h3 {
+      margin: 0;
+      color: #d63384;
+    }
+    .product p {
+      margin: 5px 0;
+    }
+    .product button {
+      background-color: #ff69b4;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .product button:hover {
+      background-color: #e055a6;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">MyShop</a>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="navbar-links" id="navLinks">
+      <a href="index.html">🏠 Home</a>
+      <a href="favorites.html">💖 Favorites</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="checkout.html">💳 Checkout</a>
+      <a href="admin-dashboard.html">🛠 Dashboard</a>
+      <a href="login.html">🔐 Login</a>
+    </div>
+  </nav>  <div class="favorites" id="favoritesList">
+    <!-- Favorite products will appear here -->
+  </div>  <script>
+    function toggleMenu() {
+      const links = document.getElementById('navLinks');
+      links.classList.toggle('show');
+    }
+
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    const container = document.getElementById('favoritesList');
+
+    function renderFavorites() {
+      container.innerHTML = '';
+      if (favorites.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999">No favorites added yet.</p>';
+        return;
+      }
+      favorites.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${item.imageUrl}" alt="${item.name}">
+          <div class="product-details">
+            <h3>${item.name}</h3>
+            <p>$${item.price.toFixed(2)}</p>
+            <button onclick="removeFavorite(${index})">Remove</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removeFavorite(index) {
+      favorites.splice(index, 1);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      renderFavorites();
+    }
+
+    renderFavorites();
+  </script></body>
+</html>

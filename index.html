@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Fashion Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800">
+  <!-- Navbar -->
+  <nav class="bg-pink-500 text-white p-4 flex justify-between items-center shadow-md fixed w-full top-0 z-50">
+    <h1 class="text-2xl font-bold">MyFashion</h1>
+    <div class="space-x-4">
+      <a href="favorites.html" class="hover:underline">❤️ Favorites</a>
+      <a href="cart.html" class="hover:underline">🛒 Cart</a>
+      <a href="payment.html" class="hover:underline">💳 Pay</a>
+      <a href="admin-dashboard.html" class="hover:underline">📊 Dashboard</a>
+      <a href="login.html" class="hover:underline">Login</a>
+    </div>
+  </nav>  <!-- Main Content -->  <main class="pt-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-pink-500 mb-4">Crafted with love just for you 💕</h2><!-- Product Grid -->
+<div id="productContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+  <!-- Products will be dynamically inserted here -->
+</div>
+
+  </main>  <script>
+    const products = JSON.parse(localStorage.getItem('myProducts')) || [];
+    const container = document.getElementById('productContainer');
+
+    products.forEach((product, index) => {
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-2xl shadow p-3';
+
+      card.innerHTML = `
+        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-40 object-cover rounded-xl mb-2" />
+        <h3 class="text-pink-600 font-bold text-lg">${product.name}</h3>
+        <p class="text-gray-500">$${product.price.toFixed(2)}</p>
+        <button onclick="addToCart(${index})" class="bg-pink-500 hover:bg-pink-600 text-white py-1 px-2 mt-2 rounded w-full">Add to Cart</button>
+        <button onclick="addToFavorites(${index})" class="bg-gray-200 text-pink-600 py-1 px-2 mt-1 rounded w-full">❤ Add to Favorites</button>
+      `;
+
+      container.appendChild(card);
+    });
+
+    function addToCart(index) {
+      const product = products[index];
+      let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+      cart.push(product);
+      localStorage.setItem('cartItems', JSON.stringify(cart));
+      alert('🛒 Added to cart!');
+    }
+
+    function addToFavorites(index) {
+      const product = products[index];
+      let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      favorites.push(product);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      alert('💖 Added to favorites!');
+    }
+  </script></body>
+</html>
